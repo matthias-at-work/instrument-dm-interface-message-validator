@@ -12,19 +12,41 @@ namespace JsonValidator
     static class Program
     {
         // Set the path to the repo here!
-        private static readonly string BaseDir = @"C:\Code\GitHub\instrument-dm-interface";
+
+        // Prepared settings: (1) Instrument-DM-Interface
+        static readonly string BaseDir = @"C:\Code\GitHub\instrument-dm-interface";
+        static readonly string RelPathToTypesDirectory = @"X800\types";
+        static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
+
+        // Prepared settings: (2) ASAP
+        //static readonly string BaseDir = @"C:\Code\GitHub\ASAP";
+        //static readonly string RelPathToTypesDirectory = @"X800\asap\types";
+        //static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
+
+        // Prepared settings: (3) key-value-translations
+        //static readonly string BaseDir = @"C:\Code\GitHub\key-value-translations";
+        //static readonly string RelPathToTypesDirectory = null; // no shared types
+        //static IEnumerable<string> JsonFileNames = new[]
+        //{
+        //    Path.Combine(BaseDir, "AuditRecordEventCodes.json"),
+        //    Path.Combine(BaseDir, "Flags.json"),
+        //    Path.Combine(BaseDir, "SampleTypes.json")
+        //};
 
         private static readonly string SchemaDir = Path.Combine(BaseDir, @"schema");
         private static readonly Uri BaseUri = new Uri(@"http://roche.com/rmd/");
 
         static void Main()
         {
-            IList<string> invalidFileNames = new List<string>();
-
             // create a resolver with all type-schemas loaded.
-            JSchemaPreloadedResolver schemaResolver = CreateResolver(Path.Combine(SchemaDir, @"X800\types"));
+            JSchemaPreloadedResolver resolver = new JSchemaPreloadedResolver();
+            if (!string.IsNullOrEmpty(RelPathToTypesDirectory))
+            {
+                AddTypesToResolver(resolver, Path.Combine(SchemaDir, RelPathToTypesDirectory));
+            }
+
             Console.WriteLine("SchemaResolver was initialized with the following types:");
-            foreach (Uri uri in schemaResolver.PreloadedUris)
+            foreach (Uri uri in resolver.PreloadedUris)
             {
                 Console.WriteLine("  {0}", uri);
             }
@@ -32,14 +54,14 @@ namespace JsonValidator
             // load all examples and validate them.
             Console.WriteLine();
             Console.WriteLine("Validating examples");
-            IEnumerable<string> jsonMessageFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
 
-            foreach (string jsonMessageFileName in jsonMessageFileNames)
+            IList<string> invalidFileNames = new List<string>();
+            foreach (string jsonMessageFileName in JsonFileNames)
             {
                 JObject jsonMessage = LoadJsonFile(jsonMessageFileName);
                 Uri referencedMessageSchema = GetReferencedSchema(jsonMessage);
 
-                JSchema messageSchema = LoadMessageSchema(referencedMessageSchema, schemaResolver);
+                JSchema messageSchema = LoadMessageSchema(referencedMessageSchema, resolver);
                 bool isValid = jsonMessage.IsValid(messageSchema);
 
                 Console.WriteLine("  {0} :  {1}", isValid ? "Valid" : "Invalid", jsonMessageFileName);
@@ -117,14 +139,10 @@ namespace JsonValidator
             }
         }
 
-        private static JSchemaPreloadedResolver CreateResolver(string typesDirectory)
+        private static void AddTypesToResolver(JSchemaPreloadedResolver resolver, string typesDirectory)
         {
-            JSchemaPreloadedResolver resolver = new JSchemaPreloadedResolver();
-
-            // load the json schema #04 - all schemas reference this.
             JSchema rootSchema = ReadJsonSchemaDraft04();
 
-            // load all types.
             IEnumerable<string> schemaFileNames = Directory.GetFiles(typesDirectory, @"*.json", SearchOption.AllDirectories);
             foreach (string schemaFileName in schemaFileNames)
             {
@@ -137,9 +155,8 @@ namespace JsonValidator
 
                 string url = schema.Properties().First(p => p.Name.Equals("id")).Value.ToString();
                 resolver.Add(new Uri(url), schema.ToString());
+            
             }
-
-            return resolver;
         }
 
         private static JSchema ReadJsonSchemaDraft04()
