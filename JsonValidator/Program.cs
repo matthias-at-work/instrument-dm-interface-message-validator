@@ -13,25 +13,43 @@ namespace JsonValidator
     {
         // Set the path to the repo here!
 
-        // Prepared settings: (1) Instrument-DM-Interface
-        static readonly string BaseDir = @"C:\Code\GitHub\instrument-dm-interface";
-        static readonly string RelPathToTypesDirectory = @"X800\types";
-        static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
+        //// Prepared settings: (1) Instrument-DM-Interface
+        //static readonly string BaseDir = @"C:\Code\GitLab\instrument-dm-interface";
+        //static readonly string RelPathToTypesDirectory = @"X800\types";
+        //static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
 
-        // Prepared settings: (2) ASAP
-        //static readonly string BaseDir = @"C:\Code\GitHub\ASAP";
+        //// Prepared settings: (2) ASAP
+        //static readonly string BaseDir = @"C:\Code\GitLab\ASAP";
         //static readonly string RelPathToTypesDirectory = @"X800\asap\types";
         //static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
 
-        // Prepared settings: (3) key-value-translations
-        //static readonly string BaseDir = @"C:\Code\GitHub\key-value-translations";
+        //// Prepared settings: (3) key-value-translations
+        //static readonly string BaseDir = @"C:\Code\GitLab\coded-values-audit-records";
         //static readonly string RelPathToTypesDirectory = null; // no shared types
         //static IEnumerable<string> JsonFileNames = new[]
         //{
         //    Path.Combine(BaseDir, "AuditRecordEventCodes.json"),
-        //    Path.Combine(BaseDir, "Flags.json"),
-        //    Path.Combine(BaseDir, "SampleTypes.json")
+        ////    Path.Combine(BaseDir, "Flags.json"),
+        // //   Path.Combine(BaseDir, "SampleTypes.json")
         //};
+
+        //// Prepared settings: (4) Access control API
+        //static readonly string BaseDir = @"C:\Code\GitLab\dm-access-control-api\jwt";
+        //private static readonly string RelPathToTypesDirectory = null;
+        //static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
+
+        // Prepared settings: (5) Data Upload
+        static readonly string BaseDir = @"C:\Code\GitLab\dm-data-upload\";
+        private static readonly string RelPathToTypesDirectory = @"x800\dm";
+        static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
+
+        //private static IEnumerable<string> JsonFileNames = new string[]
+        //{
+        //    @"C:\Code\GitLab\dm-data-upload\Example\Package-BBA48610-5427-4A27-95FE-3DC50AA1EDF4.metadata.json",
+        //    @"C:\Code\GitLab\dm-data-upload\Example\Bundle 1\Settings_2019_04_18_15_08_32_500.json",
+        //    @"C:\Code\GitLab\dm-data-upload\Example\Bundle 2\Inventory_2019_04_18_15_11_00_018.json",
+        //};
+
 
         private static readonly string SchemaDir = Path.Combine(BaseDir, @"schema");
         private static readonly Uri BaseUri = new Uri(@"http://roche.com/rmd/");
