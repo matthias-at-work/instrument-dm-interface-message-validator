@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
@@ -13,10 +14,10 @@ namespace JsonValidator
     {
         // Set the path to the repo here!
 
-        //// Prepared settings: (1) Instrument-DM-Interface
-        //static readonly string BaseDir = @"C:\Code\GitLab\instrument-dm-interface";
-        //static readonly string RelPathToTypesDirectory = @"X800\types";
-        //static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
+        // Prepared settings: (1) Instrument-DM-Interface
+        static readonly string BaseDir = @"C:\Code\GitLab\instrument-dm-interface";
+        static readonly string RelPathToTypesDirectory = @"X800\types";
+        static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
 
         //// Prepared settings: (2) ASAP
         //static readonly string BaseDir = @"C:\Code\GitLab\ASAP";
@@ -38,10 +39,10 @@ namespace JsonValidator
         //private static readonly string RelPathToTypesDirectory = null;
         //static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
 
-        // Prepared settings: (5) Data Upload
-        static readonly string BaseDir = @"C:\Code\GitLab\dm-data-upload\";
-        private static readonly string RelPathToTypesDirectory = @"x800\dm";
-        static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
+        //// Prepared settings: (5) Data Upload
+        //static readonly string BaseDir = @"C:\Code\GitLab\dm-data-upload\";
+        //private static readonly string RelPathToTypesDirectory = @"x800\dm";
+        //static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
 
         //private static IEnumerable<string> JsonFileNames = new string[]
         //{
@@ -56,6 +57,7 @@ namespace JsonValidator
 
         static void Main()
         {
+
             // create a resolver with all type-schemas loaded.
             JSchemaPreloadedResolver resolver = new JSchemaPreloadedResolver();
             if (!string.IsNullOrEmpty(RelPathToTypesDirectory))
@@ -80,9 +82,16 @@ namespace JsonValidator
                 Uri referencedMessageSchema = GetReferencedSchema(jsonMessage);
 
                 JSchema messageSchema = LoadMessageSchema(referencedMessageSchema, resolver);
-                bool isValid = jsonMessage.IsValid(messageSchema);
+                bool isValid = jsonMessage.IsValid(messageSchema, out IList<string> errors);
 
                 Console.WriteLine("  {0} :  {1}", isValid ? "Valid" : "Invalid", jsonMessageFileName);
+                if (errors != null)
+                {
+                    foreach (string error in errors)
+                    {
+                        Console.WriteLine(error);
+                    }
+                }
 
                 if (!isValid)
                 {
