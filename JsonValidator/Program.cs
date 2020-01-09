@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
@@ -14,10 +13,10 @@ namespace JsonValidator
     {
         // Set the path to the repo here!
 
-        // Prepared settings: (1) Instrument-DM-Interface
-        static readonly string BaseDir = @"C:\Code\GitLab\instrument-dm-interface";
-        static readonly string RelPathToTypesDirectory = @"X800\types";
-        static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
+        //// Prepared settings: (1) Instrument-DM-Interface
+        //static readonly string BaseDir = @"C:\Code\GitLab\instrument-dm-interface";
+        //static readonly string RelPathToTypesDirectory = @"X800\types";
+        //static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
 
         //// Prepared settings: (2) ASAP
         //static readonly string BaseDir = @"C:\Code\GitLab\ASAP";
@@ -43,7 +42,6 @@ namespace JsonValidator
         //static readonly string BaseDir = @"C:\Code\GitLab\dm-data-upload\";
         //private static readonly string RelPathToTypesDirectory = @"x800\dm";
         //static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
-
         //private static IEnumerable<string> JsonFileNames = new string[]
         //{
         //    @"C:\Code\GitLab\dm-data-upload\Example\Package-BBA48610-5427-4A27-95FE-3DC50AA1EDF4.metadata.json",
@@ -51,13 +49,16 @@ namespace JsonValidator
         //    @"C:\Code\GitLab\dm-data-upload\Example\Bundle 2\Inventory_2019_04_18_15_11_00_018.json",
         //};
 
+        // Prepared settings: (6) Calculator Interface
+        private static string BaseDir = @"C:\Code\GitLab\calculator-interface";
+        private static readonly string RelPathToTypesDirectory = @"X800\types"; 
+        private static IEnumerable<string> JsonFileNames = Directory.GetFiles(Path.Combine(BaseDir, "examples"), @"*.json", SearchOption.AllDirectories);
 
         private static readonly string SchemaDir = Path.Combine(BaseDir, @"schema");
         private static readonly Uri BaseUri = new Uri(@"http://roche.com/rmd/");
 
         static void Main()
         {
-
             // create a resolver with all type-schemas loaded.
             JSchemaPreloadedResolver resolver = new JSchemaPreloadedResolver();
             if (!string.IsNullOrEmpty(RelPathToTypesDirectory))
